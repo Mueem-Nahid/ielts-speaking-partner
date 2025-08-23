@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings } from 'lucide-react';
 import TestSession from '@/components/TestSession';
 
@@ -25,8 +25,53 @@ export default function IELTSSpeakingPartner() {
   });
   const [showSettings, setShowSettings] = useState(false);
 
+  // API Key storage functions
+  const saveApiKey = (key: string) => {
+    const expirationTime = Date.now() + (3 * 24 * 60 * 60 * 1000); // 3 days in milliseconds
+    const apiKeyData = {
+      key: key,
+      expiration: expirationTime
+    };
+    localStorage.setItem('ielts-api-key', JSON.stringify(apiKeyData));
+  };
+
+  const loadApiKey = () => {
+    try {
+      const storedData = localStorage.getItem('ielts-api-key');
+      if (storedData) {
+        const apiKeyData = JSON.parse(storedData);
+        if (Date.now() < apiKeyData.expiration) {
+          return apiKeyData.key;
+        } else {
+          // Key has expired, remove it
+          localStorage.removeItem('ielts-api-key');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading API key from localStorage:', error);
+      localStorage.removeItem('ielts-api-key');
+    }
+    return null;
+  };
+
+  const clearApiKey = () => {
+    localStorage.removeItem('ielts-api-key');
+    setApiKey('');
+    setIsApiKeySet(false);
+  };
+
+  // Load API key on component mount
+  useEffect(() => {
+    const storedApiKey = loadApiKey();
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+      setIsApiKeySet(true);
+    }
+  }, []);
+
   const handleApiKeySubmit = () => {
     if (apiKey.trim()) {
+      saveApiKey(apiKey.trim());
       setIsApiKeySet(true);
       setShowSettings(false);
     }
@@ -75,7 +120,7 @@ export default function IELTSSpeakingPartner() {
           </div>
           
           <div className="mt-6 text-xs text-gray-500 text-center">
-            Your API key is stored locally and never sent to our servers
+            Your API key is stored locally for 3 days and never sent to our servers
           </div>
         </div>
       </div>
@@ -196,6 +241,9 @@ export default function IELTSSpeakingPartner() {
                     onChange={(e) => setApiKey(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <p className="text-xs text-gray-500 mt-2">
+                    API key is stored locally for 3 days, then automatically removed
+                  </p>
                 </div>
                 <div className="flex gap-3">
                   <button
@@ -203,6 +251,12 @@ export default function IELTSSpeakingPartner() {
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                   >
                     Cancel
+                  </button>
+                  <button
+                    onClick={clearApiKey}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                  >
+                    Clear Key
                   </button>
                   <button
                     onClick={handleApiKeySubmit}
