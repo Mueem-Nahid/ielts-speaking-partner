@@ -1,4 +1,6 @@
 import OpenAI from 'openai';
+import part1Questions from '@/data/part_1_questions.json';
+import part2Questions from '@/data/part_2_questions.json';
 
 export class OpenAIService {
   private client: OpenAI;
@@ -18,6 +20,7 @@ export class OpenAIService {
       // Make a simple request to test the API key
       await this.client.models.list();
       return { isValid: true };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('API key validation failed:', error);
       
@@ -50,6 +53,7 @@ export class OpenAIService {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handleApiError(error: any, operation: string): never {
     console.error(`Error in ${operation}:`, error);
     
@@ -70,8 +74,8 @@ export class OpenAIService {
 
   async generateQuestion(part: number, questionNumber: number, previousResponses?: string[]): Promise<string> {
     const prompts = {
-      1: this.getPart1Prompt(questionNumber),
-      2: this.getPart2Prompt(questionNumber),
+      1: this.getPart1Prompt(),
+      2: this.getPart2Prompt(),
       3: this.getPart3Prompt(questionNumber, previousResponses)
     };
 
@@ -236,60 +240,35 @@ export class OpenAIService {
     }
   }
 
-  private getPart1Prompt(questionNumber: number): string {
-    const topics = [
-      'hometown and where you live',
-      'work or studies',
-      'family and friends',
-      'hobbies and interests',
-      'daily routine',
-      'food and cooking',
-      'travel and transportation',
-      'technology and social media',
-      'weather and seasons',
-      'shopping and money'
-    ];
-
-    const topic = topics[questionNumber % topics.length];
-    return `Generate a Part 1 IELTS speaking question about ${topic}. Make it personal and suitable for getting to know the candidate.`;
+  private getPart1Prompt(): string {
+    // Use random selection from part1Questions array
+    const questions = part1Questions;
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    const selectedQuestion = questions[randomIndex];
+    
+    // Use the question as a topic to generate similar questions
+    return `Generate a Part 1 IELTS speaking question similar to: "${selectedQuestion}". Make it personal and suitable for getting to know the candidate.`;
   }
 
-  private getPart2Prompt(questionNumber: number): string {
-    const topics = [
-      'a memorable journey or trip',
-      'a person who has influenced you',
-      'a skill you would like to learn',
-      'a book or movie you enjoyed',
-      'a place you would like to visit',
-      'an important decision you made',
-      'a celebration or festival',
-      'a piece of technology you use',
-      'a childhood memory',
-      'a goal you want to achieve'
-    ];
-
-    const topic = topics[questionNumber % topics.length];
-    return `Generate a Part 2 IELTS speaking question about ${topic}. Include the standard format with "You should say:" and 3-4 bullet points, ending with "and explain why..."`;
+  private getPart2Prompt(): string {
+    // Use random selection from part2Questions array
+    const questions = part2Questions;
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    const selectedTopic = questions[randomIndex];
+    
+    // Use the topic to generate a proper Part 2 cue card
+    return `Generate a Part 2 IELTS speaking question based on: "${selectedTopic}". Include the standard format with "You should say:" and 3-4 bullet points, ending with "and explain why..."`;
   }
 
   private getPart3Prompt(questionNumber: number, previousResponses?: string[]): string {
-    const themes = [
-      'education and learning',
-      'technology and society',
-      'environment and sustainability',
-      'work and career development',
-      'culture and traditions',
-      'health and lifestyle',
-      'communication and relationships',
-      'travel and globalization',
-      'media and entertainment',
-      'future trends and changes'
-    ];
-
-    const theme = themes[questionNumber % themes.length];
+    // Use random selection from part2Questions to create follow-up Part 3 questions
+    const part2Topics = part2Questions;
+    const randomIndex = Math.floor(Math.random() * part2Topics.length);
+    const selectedPart2Topic = part2Topics[randomIndex];
     const context = previousResponses ? `Based on previous discussion about: ${previousResponses.join(', ')}` : '';
     
-    return `Generate a Part 3 IELTS speaking question about ${theme}. ${context} Make it abstract and analytical, suitable for discussion and opinion.`;
+    // Generate Part 3 follow-up questions based on Part 2 topic
+    return `Generate a Part 3 IELTS speaking follow-up question based on this Part 2 topic: "${selectedPart2Topic}". ${context} Make it abstract, analytical, and suitable for discussion. Focus on broader themes, societal implications, comparisons, or future predictions related to the topic. The question should require critical thinking and detailed explanations.`;
   }
 
   private getFallbackQuestion(part: number, questionNumber: number): string {

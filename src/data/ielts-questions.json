@@ -1,0 +1,254 @@
+{
+  "part1": {
+    "topics": [
+      {
+        "topic": "hometown and where you live",
+        "questions": [
+          "Tell me about your hometown.",
+          "What do you like most about where you live?",
+          "How long have you been living there?",
+          "What would you change about your hometown if you could?",
+          "Do you think you will continue living there in the future?"
+        ]
+      },
+      {
+        "topic": "work or studies",
+        "questions": [
+          "What do you do for work or study?",
+          "Do you enjoy your work/studies?",
+          "What's the most interesting part of your job/studies?",
+          "What are your future career plans?",
+          "How do you usually get to work/university?"
+        ]
+      },
+      {
+        "topic": "family and friends",
+        "questions": [
+          "Tell me about your family.",
+          "Who are you closest to in your family?",
+          "Do you prefer spending time with family or friends?",
+          "How often do you see your friends?",
+          "What do you usually do when you meet your friends?"
+        ]
+      },
+      {
+        "topic": "hobbies and interests",
+        "questions": [
+          "What are your hobbies?",
+          "How did you become interested in this hobby?",
+          "How much time do you spend on your hobbies?",
+          "Have your interests changed since you were a child?",
+          "What new hobby would you like to try?"
+        ]
+      },
+      {
+        "topic": "daily routine",
+        "questions": [
+          "Describe your typical day.",
+          "What time do you usually wake up?",
+          "What's your favorite part of the day?",
+          "How has your daily routine changed recently?",
+          "Do you prefer to have a fixed routine or be flexible?"
+        ]
+      },
+      {
+        "topic": "food and cooking",
+        "questions": [
+          "What's your favorite food?",
+          "Do you like cooking?",
+          "What's a typical meal in your country?",
+          "Do you prefer eating at home or in restaurants?",
+          "Have your eating habits changed over the years?"
+        ]
+      },
+      {
+        "topic": "travel and transportation",
+        "questions": [
+          "How do you usually travel around your city?",
+          "Do you like traveling?",
+          "What's the longest journey you've ever taken?",
+          "Do you prefer traveling alone or with others?",
+          "What means of transport do you use most often?"
+        ]
+      },
+      {
+        "topic": "technology and social media",
+        "questions": [
+          "How often do you use social media?",
+          "What's your favorite app on your phone?",
+          "How has technology changed your life?",
+          "Do you think people spend too much time on their phones?",
+          "What new technology would you like to try?"
+        ]
+      },
+      {
+        "topic": "weather and seasons",
+        "questions": [
+          "What's the weather like in your country?",
+          "What's your favorite season?",
+          "How does the weather affect your mood?",
+          "Do you prefer hot or cold weather?",
+          "What do you usually do on rainy days?"
+        ]
+      },
+      {
+        "topic": "shopping and money",
+        "questions": [
+          "Do you enjoy shopping?",
+          "How often do you go shopping?",
+          "Do you prefer shopping online or in stores?",
+          "What was the last thing you bought?",
+          "Are you good at saving money?"
+        ]
+      }
+    ]
+  },
+  "part2": {
+    "topics": [
+      {
+        "topic": "a memorable journey or trip",
+        "question": "Describe a memorable journey or trip you have taken. You should say:\n• where you went\n• who you went with\n• what you did there\nand explain why this journey was memorable for you."
+      },
+      {
+        "topic": "a person who has influenced you",
+        "question": "Describe a person who has influenced you in your life. You should say:\n• who this person is\n• how you know them\n• what they are like\nand explain how they have influenced you."
+      },
+      {
+        "topic": "a skill you would like to learn",
+        "question": "Describe a skill you would like to learn. You should say:\n• what the skill is\n• why you want to learn it\n• how you would learn it\nand explain how this skill would help you in your life."
+      },
+      {
+        "topic": "a book or movie you enjoyed",
+        "question": "Describe a book or movie you really enjoyed. You should say:\n• what it was about\n• when you read/watched it\n• why you chose it\nand explain why you enjoyed it so much."
+      },
+      {
+        "topic": "a place you would like to visit",
+        "question": "Describe a place you would like to visit in the future. You should say:\n• where this place is\n• what you know about it\n• what you would do there\nand explain why you want to visit this place."
+      },
+      {
+        "topic": "an important decision you made",
+        "question": "Describe an important decision you made in your life. You should say:\n• what the decision was\n• when you made it\n• what factors influenced your decision\nand explain why this decision was important to you."
+      },
+      {
+        "topic": "a celebration or festival",
+        "question": "Describe a celebration or festival that is important in your culture. You should say:\n• what the celebration is\n• when it takes place\n• how people celebrate it\nand explain why this celebration is important to you."
+      },
+      {
+        "topic": "a piece of technology you use",
+        "question": "Describe a piece of technology you use regularly. You should say:\n• what it is\n• how often you use it\n• what you use it for\nand explain how this technology has made your life easier."
+      },
+      {
+        "topic": "a childhood memory",
+        "question": "Describe a happy memory from your childhood. You should say:\n• what happened\n• where you were\n• who was with you\nand explain why this memory is special to you."
+      },
+      {
+        "topic": "a goal you want to achieve",
+        "question": "Describe a goal you want to achieve in the future. You should say:\n• what the goal is\n• why it's important to you\n• what steps you need to take\nand explain how achieving this goal would change your life."
+      }
+    ]
+  },
+  "part3": {
+    "themes": [
+      {
+        "theme": "education and learning",
+        "questions": [
+          "How do you think education will change in the future?",
+          "What are the advantages and disadvantages of online learning?",
+          "Should education be free for everyone?",
+          "How important is it to learn practical skills versus academic subjects?",
+          "What role should technology play in education?"
+        ]
+      },
+      {
+        "theme": "technology and society",
+        "questions": [
+          "What are the advantages and disadvantages of modern technology?",
+          "How has technology changed the way people communicate?",
+          "Do you think people are becoming too dependent on technology?",
+          "What impact will artificial intelligence have on jobs?",
+          "How can we ensure technology is used responsibly?"
+        ]
+      },
+      {
+        "theme": "environment and sustainability",
+        "questions": [
+          "What are the biggest environmental challenges facing the world today?",
+          "How can individuals contribute to protecting the environment?",
+          "Should governments do more to address climate change?",
+          "What role do businesses have in environmental protection?",
+          "How can we balance economic growth with environmental protection?"
+        ]
+      },
+      {
+        "theme": "work and career development",
+        "questions": [
+          "How has the nature of work changed in recent years?",
+          "What skills will be most important for future careers?",
+          "Should people change careers multiple times in their lives?",
+          "How important is work-life balance?",
+          "What are the benefits and drawbacks of working from home?"
+        ]
+      },
+      {
+        "theme": "culture and traditions",
+        "questions": [
+          "How important is it to preserve traditional culture?",
+          "How has globalization affected local cultures?",
+          "Should young people learn about their cultural heritage?",
+          "How can countries maintain their identity in a globalized world?",
+          "What are the benefits of cultural diversity?"
+        ]
+      },
+      {
+        "theme": "health and lifestyle",
+        "questions": [
+          "What are the most important factors for maintaining good health?",
+          "How has people's lifestyle changed compared to the past?",
+          "Should governments regulate unhealthy foods?",
+          "What role does mental health play in overall wellbeing?",
+          "How can society encourage people to live healthier lives?"
+        ]
+      },
+      {
+        "theme": "communication and relationships",
+        "questions": [
+          "How has social media changed the way people form relationships?",
+          "What makes a good friend?",
+          "How important is face-to-face communication in the digital age?",
+          "What are the challenges of maintaining long-distance relationships?",
+          "How do cultural differences affect communication between people?"
+        ]
+      },
+      {
+        "theme": "travel and globalization",
+        "questions": [
+          "What are the benefits and drawbacks of international travel?",
+          "How has tourism affected different countries?",
+          "Should there be limits on international travel for environmental reasons?",
+          "How has globalization changed the world?",
+          "What can people learn from traveling to other countries?"
+        ]
+      },
+      {
+        "theme": "media and entertainment",
+        "questions": [
+          "How has the entertainment industry changed with digital technology?",
+          "What influence does media have on people's opinions?",
+          "Should there be censorship in media and entertainment?",
+          "How do you think people will consume entertainment in the future?",
+          "What are the positive and negative effects of social media on society?"
+        ]
+      },
+      {
+        "theme": "future trends and changes",
+        "questions": [
+          "What changes do you expect to see in the next 20 years?",
+          "How will cities look different in the future?",
+          "What new challenges might future generations face?",
+          "How important is it to plan for the future?",
+          "What role will innovation play in solving future problems?"
+        ]
+      }
+    ]
+  }
+}
