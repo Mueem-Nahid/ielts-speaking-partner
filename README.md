@@ -2,19 +2,22 @@
 
 An AI-powered IELTS speaking practice application that provides realistic test simulation with real-time feedback and scoring using OpenAI's advanced voice technology.
 
+🌐 **Live Demo**: [https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)
+
 ## 🌟 Features
 
 ### Complete IELTS Test Coverage
 - **Part 1**: Introduction and interview (4-5 minutes) - Personal questions about familiar topics
 - **Part 2**: Long turn (3-4 minutes) - Topic card with preparation time and structured speaking
-- **Part 3**: Discussion (4-5 minutes) - Abstract questions and complex discussions
+- **Part 3**: Discussion (4-5 minutes) - Abstract follow-up questions related to Part 2 topics
 
 ### Advanced AI Integration
 - **Voice Recognition**: OpenAI Whisper for accurate speech-to-text transcription
 - **Text-to-Speech**: Natural-sounding AI examiner voice using OpenAI TTS
-- **Smart Question Generation**: GPT-4 powered dynamic question creation
+- **Smart Question Generation**: GPT-4 powered dynamic question creation from authentic IELTS database
 - **Intelligent Evaluation**: Real-time band score assessment with detailed feedback
-- **Improved Responses**: AI takes your response and improves it to band 7-7.5 level while keeping your personal details
+- **Personalized Improvements**: AI enhances your responses to band 7-7.5 level while preserving your personal details
+- **Authentic IELTS Flow**: Part 3 questions are contextually related to Part 2 topics, just like the real test
 
 ### Professional Features
 - 🎯 **Authentic IELTS Format**: Questions follow official test structure and timing
@@ -23,19 +26,31 @@ An AI-powered IELTS speaking practice application that provides realistic test s
 - ⏱️ **Timer Integration**: Track your speaking time like in real tests
 - 📝 **Transcription**: See exactly what you said for self-assessment
 - 💡 **Improvement Suggestions**: Specific tips for better performance
+- 🔄 **Random Questions**: Never get the same questions twice - unlimited variety
+- 🛡️ **Secure API Key Management**: 3-day local storage with automatic expiration
+- ⚡ **Global Error Handling**: Comprehensive error management with user-friendly messages
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Quick Start (Recommended)
+Visit the live application: **[https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)**
+
+1. Enter your OpenAI API key (stored securely in your browser for 3 days)
+2. Grant microphone permission
+3. Choose your test part and start practicing!
+
+### Local Development
+
+#### Prerequisites
 - Node.js 18+ installed
 - OpenAI API key with access to GPT-4 and Whisper models
 - Modern web browser with microphone access
 
-### Installation
+#### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/your-username/ielts-speaking-partner.git
    cd ielts-speaking-partner
    ```
 
@@ -52,29 +67,28 @@ An AI-powered IELTS speaking practice application that provides realistic test s
 4. **Open your browser**
    Navigate to `http://localhost:3000`
 
-### Setup
-
-1. **Enter API Key**: When you first open the app, enter your OpenAI API key
-2. **Grant Microphone Permission**: Allow browser access to your microphone
-3. **Choose Test Part**: Select Part 1, 2, or 3 to begin practice
-
 ## 🎯 How to Use
 
 ### Starting a Practice Session
 
-1. **Select Test Part**
-   - **Part 1**: Personal questions about yourself, family, work, hobbies
-   - **Part 2**: Describe a topic with specific prompts (2 minutes speaking)
-   - **Part 3**: Abstract discussion questions related to Part 2 topic
+1. **API Key Setup**
+   - Enter your OpenAI API key on first visit
+   - Key is validated before saving
+   - Stored securely in browser for 3 days, then automatically removed
 
-2. **Practice Flow**
-   - Listen to AI-generated questions (click speaker icon)
+2. **Select Test Part**
+   - **Part 1**: Personal questions from 54 authentic IELTS topics
+   - **Part 2**: Cue card topics from 140+ comprehensive database
+   - **Part 3**: Follow-up questions contextually related to Part 2 topics
+
+3. **Practice Flow**
+   - Listen to AI-generated question variations (click speaker icon)
    - Click microphone to start recording your response
    - Speak naturally and clearly
    - Click microphone again to stop recording
    - Submit your response for evaluation
 
-3. **Get Feedback**
+4. **Get Comprehensive Feedback**
    - View your transcribed response
    - Receive band score (1-9 scale)
    - Read detailed feedback on:
@@ -83,80 +97,86 @@ An AI-powered IELTS speaking practice application that provides realistic test s
      - Grammatical Range and Accuracy
      - Pronunciation assessment
 
-4. **Learn from Model Answers**
+5. **Learn from Personalized Model Answers**
    - Click "Show Model Answer" after receiving feedback
-   - Study AI-generated band 7-7.5 standard responses
-   - Compare your answer with the model to identify improvements
+   - View AI-improved version of YOUR response (not generic answers)
+   - Maintains your personal details while enhancing language quality
    - Learn proper structure, vocabulary, and fluency patterns
 
-5. **Continue Practice**
-   - Move to next question
-   - Switch between test parts
-   - Review previous responses
+6. **Continue Practice**
+   - Get fresh, random questions every time
+   - Switch between test parts seamlessly
+   - Experience authentic IELTS test flow
 
 ## 🏗️ Project Structure
 
 ```
 src/
 ├── app/
-│   ├── page.tsx              # Main application component
-│   ├── layout.tsx            # App layout
+│   ├── page.tsx              # Main application with API key management
+│   ├── layout.tsx            # App layout with error provider
 │   └── globals.css           # Global styles
 ├── components/
-│   └── TestSession.tsx       # Test session management
+│   └── TestSession.tsx       # Complete test session management
+├── contexts/
+│   └── ErrorContext.tsx     # Global error handling system
 ├── hooks/
 │   └── useAudioRecorder.ts   # Audio recording functionality
-└── lib/
-    └── openai.ts             # OpenAI service integration
+├── lib/
+│   └── openai.ts             # OpenAI service with comprehensive error handling
+└── data/
+    ├── part_1_questions.json # 54 authentic Part 1 questions
+    ├── part_2_questions.json # 140+ Part 2 topics
+    └── ielts-questions.json  # Additional question database
 ```
 
 ## 🔧 Technical Details
 
 ### Built With
-- **Next.js 15** - React framework with App Router
+- **Next.js 15** - React framework with App Router and Turbopack
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
 - **OpenAI API** - GPT-4, Whisper, and TTS models
 - **Web Audio API** - Browser audio recording
+- **Vercel** - Deployment and hosting
 
-### Key Components
+### Key Features
 
-#### OpenAI Service (`src/lib/openai.ts`)
-- Question generation for all test parts
-- Speech-to-text transcription
-- Text-to-speech for questions
-- Response evaluation and scoring
+#### Authentic Question Database
+- **Part 1**: 54 carefully curated personal questions
+- **Part 2**: 140+ comprehensive cue card topics
+- **Part 3**: AI-generated follow-ups based on Part 2 topics
+- **Random Selection**: Different questions every session
+- **AI Variations**: Fresh question variations using your database as prompts
 
-#### Audio Recorder Hook (`src/hooks/useAudioRecorder.ts`)
-- Real-time audio recording
-- Playback functionality
-- Error handling and permissions
+#### Advanced Error Handling
+- **API Key Validation**: Detects fake/invalid keys before saving
+- **Network Error Recovery**: Graceful handling of connection issues
+- **User-Friendly Messages**: Clear, actionable error notifications
+- **Automatic Error Clearing**: Errors disappear after 5 seconds
+- **Fallback Systems**: Backup questions if API fails
 
-#### Test Session Component (`src/components/TestSession.tsx`)
-- Complete test flow management
-- Timer and progress tracking
-- Response evaluation display
+#### Security & Privacy
+- **Local Storage Only**: API keys never sent to external servers
+- **3-Day Expiration**: Automatic key removal for security
+- **No Data Collection**: Your responses stay private
+- **Secure Validation**: Keys validated before storage
 
 ## 🎨 User Interface
 
 ### Design Features
-- **Modern UI**: Clean, professional interface
-- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Modern UI**: Clean, professional interface optimized for focus
+- **Responsive Design**: Perfect on desktop, tablet, and mobile
 - **Visual Feedback**: Clear recording status and progress indicators
 - **Accessibility**: Keyboard navigation and screen reader support
+- **Loading States**: Visual feedback during API key validation
 
 ### Color Coding
-- **Green**: Part 1 (Introduction)
-- **Orange**: Part 2 (Long turn)
-- **Purple**: Part 3 (Discussion)
+- **Green**: Part 1 (Introduction & Interview)
+- **Orange**: Part 2 (Long Turn & Cue Cards)
+- **Purple**: Part 3 (Discussion & Analysis)
 - **Blue**: Primary actions and navigation
-
-## 🔒 Privacy & Security
-
-- **Local Storage**: API keys stored only in browser localStorage
-- **No Data Collection**: Responses not stored on external servers
-- **Secure Communication**: Direct API calls to OpenAI
-- **Microphone Privacy**: Audio only processed during active recording
+- **Red**: Error states and warnings
 
 ## 📊 Evaluation Criteria
 
@@ -184,16 +204,19 @@ The AI evaluates responses based on official IELTS criteria:
 
 ## 🚀 Deployment
 
+### Live Application
+The app is deployed on Vercel: **[https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)**
+
+### Deploy Your Own
+1. Fork this repository
+2. Connect to Vercel
+3. Deploy with one click
+4. No environment variables needed (API keys handled client-side)
+
 ### Build for Production
 ```bash
 npm run build
 npm start
-```
-
-### Environment Variables
-Create a `.env.local` file for production:
-```
-NEXT_PUBLIC_OPENAI_API_KEY=your_api_key_here
 ```
 
 ## 🤝 Contributing
@@ -213,41 +236,66 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Common Issues
 
 **Microphone not working?**
-- Check browser permissions
+- Check browser permissions in address bar
 - Ensure HTTPS connection (required for microphone access)
-- Try refreshing the page
+- Try refreshing the page and granting permission again
 
-**API errors?**
-- Verify your OpenAI API key is valid
+**API Key errors?**
+- Verify your OpenAI API key is valid and active
 - Check your OpenAI account has sufficient credits
 - Ensure you have access to GPT-4 and Whisper models
+- Try entering the key again (validation happens automatically)
 
 **Audio playback issues?**
 - Check browser audio settings
 - Ensure speakers/headphones are connected
-- Try a different browser
+- Try a different browser (Chrome recommended)
+
+**Questions not generating?**
+- Check your internet connection
+- Verify API key has proper permissions
+- Look for error messages in the top-right corner
 
 ### Getting Help
-- Check the browser console for error messages
+- Check the browser console for detailed error messages
 - Verify all dependencies are installed correctly
 - Ensure you're using a supported browser (Chrome, Firefox, Safari, Edge)
+- Visit the live demo to test functionality
 
 ## 🎯 Future Enhancements
 
-- [ ] Progress tracking and analytics
-- [ ] Custom question sets
-- [ ] Multiple AI voice options
+- [ ] Progress tracking and analytics dashboard
+- [ ] Custom question sets and topics
+- [ ] Multiple AI voice options and accents
 - [ ] Offline mode with cached questions
-- [ ] Performance history and trends
-- [ ] Group practice sessions
+- [ ] Performance history and improvement trends
+- [ ] Group practice sessions and competitions
 - [ ] Integration with IELTS preparation courses
+- [ ] Mobile app versions (iOS/Android)
+- [ ] Advanced pronunciation analysis
+- [ ] Speaking fluency metrics and graphs
 
 ## 🙏 Acknowledgments
 
-- OpenAI for providing advanced AI models
-- IELTS for the official test format guidelines
-- The open-source community for excellent tools and libraries
+- **OpenAI** for providing advanced AI models (GPT-4, Whisper, TTS)
+- **IELTS** for the official test format guidelines and structure
+- **Vercel** for excellent hosting and deployment platform
+- **Next.js Team** for the amazing React framework
+- **The open-source community** for excellent tools and libraries
+
+## 📈 Project Stats
+
+- **54** Authentic Part 1 questions
+- **140+** Part 2 cue card topics  
+- **Unlimited** Part 3 follow-up questions
+- **Real-time** AI evaluation and feedback
+- **3-day** secure API key storage
+- **100%** client-side privacy protection
 
 ---
 
-**Ready to improve your IELTS speaking skills?** Start practicing now at `http://localhost:3000`! 🚀
+**Ready to ace your IELTS speaking test?** 🚀
+
+**Practice now**: [https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)
+
+*Transform your IELTS speaking skills with AI-powered practice that adapts to you!*

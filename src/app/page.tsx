@@ -113,7 +113,7 @@ export default function IELTSSpeakingPartner() {
           </div>
           
           <div className="space-y-4">
-            <div>
+            <form>
               <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 mb-2">
                 OpenAI API Key
               </label>
@@ -125,7 +125,7 @@ export default function IELTSSpeakingPartner() {
                 placeholder="sk-..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-            </div>
+            </form>
             
             <button
               onClick={handleApiKeySubmit}
@@ -248,7 +248,7 @@ export default function IELTSSpeakingPartner() {
             <div className="bg-white rounded-xl p-6 w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4">Settings</h3>
               <div className="space-y-4">
-                <div>
+                <form>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     OpenAI API Key
                   </label>
@@ -261,7 +261,7 @@ export default function IELTSSpeakingPartner() {
                   <p className="text-xs text-gray-500 mt-2">
                     API key is stored locally for 3 days, then automatically removed
                   </p>
-                </div>
+                </form>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowSettings(false)}
