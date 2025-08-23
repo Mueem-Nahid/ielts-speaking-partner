@@ -142,11 +142,16 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
 
   const generateModelAnswer = useCallback(async () => {
     const question = questions[currentQuestionIndex];
+    const userResponse = responses.find(r => r.questionId === currentQuestionIndex);
     if (!question) return;
     
     setIsLoadingModelAnswer(true);
     try {
-      const modelAnswerText = await openAIService.generateModelAnswer(question.text, part);
+      const modelAnswerText = await openAIService.generateModelAnswer(
+        question.text, 
+        part, 
+        userResponse?.text // Pass the user's response to improve it
+      );
       setModelAnswer(modelAnswerText);
       setShowModelAnswer(true);
     } catch (error) {
@@ -154,7 +159,7 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
     } finally {
       setIsLoadingModelAnswer(false);
     }
-  }, [openAIService, questions, currentQuestionIndex, part]);
+  }, [openAIService, questions, currentQuestionIndex, part, responses]);
 
   const nextQuestion = useCallback(() => {
     const nextIndex = currentQuestionIndex + 1;
@@ -358,7 +363,7 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6 mb-6">
               <h4 className="font-medium text-indigo-800 mb-4 flex items-center gap-2">
                 <BookOpen size={16} />
-                Model Answer (Band 7-7.5)
+                Improved Response (Band 7-7.5)
               </h4>
               <div className="bg-white rounded-lg p-4 border border-indigo-100">
                 <p className="text-indigo-900 text-sm leading-relaxed whitespace-pre-wrap">
@@ -366,7 +371,7 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
                 </p>
               </div>
               <div className="mt-3 text-xs text-indigo-600">
-                💡 This model answer demonstrates the language level and structure expected for IELTS band 7-7.5
+                💡 This is your response improved to band 7-7.5 level while keeping your personal details and core message
               </div>
             </div>
           )}

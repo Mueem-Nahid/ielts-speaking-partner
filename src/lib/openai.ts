@@ -93,14 +93,31 @@ export class OpenAIService {
     }
   }
 
-  async generateModelAnswer(question: string, part: number): Promise<string> {
+  async generateModelAnswer(question: string, part: number, userResponse?: string): Promise<string> {
     try {
       const response = await this.client.chat.completions.create({
         model: 'gpt-4',
         messages: [
           {
             role: 'system',
-            content: `You are an IELTS speaking expert. Generate a model answer for the given question that would achieve a band score of 7.0-7.5. 
+            content: `You are an IELTS speaking expert. ${userResponse ? 'Improve and refine the user\'s response' : 'Generate a model answer'} for the given question that would achieve a band score of 7.0-7.5.
+
+            ${userResponse ? `
+            TASK: Take the user's response and improve it while keeping the same core content and personal details. 
+            
+            Improvements should include:
+            - Fix grammatical errors and awkward phrasing
+            - Enhance vocabulary with more sophisticated words where appropriate
+            - Improve sentence structure and flow
+            - Add natural hesitations and fillers (um, well, you know) for authenticity
+            - Maintain the user's personal information and experiences
+            - Keep the same overall message and meaning
+            - Make it sound more natural and fluent
+            
+            Do NOT change the user's personal details, job, experiences, or core message. Only improve the language quality.
+            ` : `
+            TASK: Generate a completely new model answer.
+            `}
 
             For Part ${part}, the response should demonstrate:
             - Natural fluency with occasional hesitation
@@ -117,7 +134,9 @@ export class OpenAIService {
           },
           {
             role: 'user',
-            content: `Generate a band 7-7.5 model answer for this IELTS Part ${part} question: "${question}"`
+            content: userResponse 
+              ? `Question: "${question}"\n\nUser's Response: "${userResponse}"\n\nPlease improve this response to band 7-7.5 level while keeping the same personal details and core content.`
+              : `Generate a band 7-7.5 model answer for this IELTS Part ${part} question: "${question}"`
           }
         ],
         max_tokens: part === 2 ? 400 : 250,
