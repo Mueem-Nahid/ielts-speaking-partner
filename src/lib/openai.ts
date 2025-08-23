@@ -93,6 +93,44 @@ export class OpenAIService {
     }
   }
 
+  async generateModelAnswer(question: string, part: number): Promise<string> {
+    try {
+      const response = await this.client.chat.completions.create({
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an IELTS speaking expert. Generate a model answer for the given question that would achieve a band score of 7.0-7.5. 
+
+            For Part ${part}, the response should demonstrate:
+            - Natural fluency with occasional hesitation
+            - Good range of vocabulary with some less common words
+            - Mix of simple and complex sentence structures
+            - Generally accurate grammar with minor errors
+            - Clear pronunciation and appropriate intonation
+            
+            ${part === 1 ? 'Keep the response concise (30-60 seconds worth of speech).' : ''}
+            ${part === 2 ? 'Structure the response to cover all bullet points and speak for about 2 minutes.' : ''}
+            ${part === 3 ? 'Provide a thoughtful, analytical response with examples and explanations.' : ''}
+            
+            Make the response sound natural and conversational, not overly formal or rehearsed.`
+          },
+          {
+            role: 'user',
+            content: `Generate a band 7-7.5 model answer for this IELTS Part ${part} question: "${question}"`
+          }
+        ],
+        max_tokens: part === 2 ? 400 : 250,
+        temperature: 0.7
+      });
+
+      return response.choices[0]?.message?.content || this.getFallbackModelAnswer(part);
+    } catch (error) {
+      console.error('Error generating model answer:', error);
+      return this.getFallbackModelAnswer(part);
+    }
+  }
+
   async textToSpeech(text: string): Promise<ArrayBuffer> {
     try {
       const response = await this.client.audio.speech.create({
@@ -217,5 +255,15 @@ export class OpenAIService {
         'Practice connecting your ideas smoothly'
       ]
     };
+  }
+
+  private getFallbackModelAnswer(part: number): string {
+    const fallbackAnswers = {
+      1: "Well, I'd say my hometown is quite interesting. It's a medium-sized city with a good mix of modern facilities and traditional culture. What I particularly enjoy about it is the friendly atmosphere - people are generally quite welcoming and helpful. There are also some lovely parks where I like to spend time, especially during weekends when the weather is nice.",
+      2: "I'd like to talk about a trip I took to the mountains last year. I went there with my close friends during the summer holidays. We spent most of our time hiking through the scenic trails and exploring the local villages. What made this journey so memorable was not just the breathtaking views, but also the sense of achievement we felt after completing some challenging hikes. It really strengthened our friendship and gave us a chance to disconnect from our busy daily routines.",
+      3: "I think this is quite a complex issue with several important aspects to consider. On one hand, there are certainly some significant benefits, such as improved efficiency and convenience. However, we also need to be aware of potential drawbacks, including the impact on traditional practices and social relationships. In my opinion, the key is finding the right balance - embracing positive changes while preserving what's valuable from the past."
+    };
+
+    return fallbackAnswers[part as keyof typeof fallbackAnswers];
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Mic, MicOff, Play, Pause, Volume2, Clock, MessageSquare, Star } from 'lucide-react';
+import { Mic, MicOff, Play, Pause, Volume2, Clock, MessageSquare, Star, BookOpen } from 'lucide-react';
 import { OpenAIService } from '@/lib/openai';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 
@@ -37,6 +37,9 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
   const [isProcessingResponse, setIsProcessingResponse] = useState(false);
   const [transcribedText, setTranscribedText] = useState('');
   const [showEvaluation, setShowEvaluation] = useState(false);
+  const [modelAnswer, setModelAnswer] = useState('');
+  const [isLoadingModelAnswer, setIsLoadingModelAnswer] = useState(false);
+  const [showModelAnswer, setShowModelAnswer] = useState(false);
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
@@ -137,11 +140,29 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
     }
   }, [audioBlob, openAIService, part, currentQuestionIndex]);
 
+  const generateModelAnswer = useCallback(async () => {
+    const question = questions[currentQuestionIndex];
+    if (!question) return;
+    
+    setIsLoadingModelAnswer(true);
+    try {
+      const modelAnswerText = await openAIService.generateModelAnswer(question.text, part);
+      setModelAnswer(modelAnswerText);
+      setShowModelAnswer(true);
+    } catch (error) {
+      console.error('Error generating model answer:', error);
+    } finally {
+      setIsLoadingModelAnswer(false);
+    }
+  }, [openAIService, questions, currentQuestionIndex, part]);
+
   const nextQuestion = useCallback(() => {
     const nextIndex = currentQuestionIndex + 1;
     setCurrentQuestionIndex(nextIndex);
     setTranscribedText('');
     setShowEvaluation(false);
+    setModelAnswer('');
+    setShowModelAnswer(false);
     clearAudio();
 
     if (nextIndex < 5) { // Assuming 5 questions per part
@@ -283,10 +304,29 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
           {/* Evaluation */}
           {showEvaluation && currentResponse?.evaluation && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-              <h4 className="font-medium text-yellow-800 mb-4 flex items-center gap-2">
-                <Star size={16} />
-                Evaluation & Feedback
-              </h4>
+              <div className="flex justify-between items-start mb-4">
+                <h4 className="font-medium text-yellow-800 flex items-center gap-2">
+                  <Star size={16} />
+                  Evaluation & Feedback
+                </h4>
+                <button
+                  onClick={generateModelAnswer}
+                  disabled={isLoadingModelAnswer}
+                  className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition-colors flex items-center gap-2"
+                >
+                  {isLoadingModelAnswer ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <BookOpen size={16} />
+                      <span>Show Model Answer</span>
+                    </>
+                  )}
+                </button>
+              </div>
               
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
@@ -309,6 +349,24 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
                     ))}
                   </ul>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Model Answer */}
+          {showModelAnswer && modelAnswer && (
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6 mb-6">
+              <h4 className="font-medium text-indigo-800 mb-4 flex items-center gap-2">
+                <BookOpen size={16} />
+                Model Answer (Band 7-7.5)
+              </h4>
+              <div className="bg-white rounded-lg p-4 border border-indigo-100">
+                <p className="text-indigo-900 text-sm leading-relaxed whitespace-pre-wrap">
+                  {modelAnswer}
+                </p>
+              </div>
+              <div className="mt-3 text-xs text-indigo-600">
+                💡 This model answer demonstrates the language level and structure expected for IELTS band 7-7.5
               </div>
             </div>
           )}

@@ -14,6 +14,7 @@ An AI-powered IELTS speaking practice application that provides realistic test s
 - **Text-to-Speech**: Natural-sounding AI examiner voice using OpenAI TTS
 - **Smart Question Generation**: GPT-4 powered dynamic question creation
 - **Intelligent Evaluation**: Real-time band score assessment with detailed feedback
+- **Model Answers**: AI-generated band 7-7.5 standard responses for learning
 
 ### Professional Features
 - 🎯 **Authentic IELTS Format**: Questions follow official test structure and timing
@@ -82,7 +83,13 @@ An AI-powered IELTS speaking practice application that provides realistic test s
      - Grammatical Range and Accuracy
      - Pronunciation assessment
 
-4. **Continue Practice**
+4. **Learn from Model Answers**
+   - Click "Show Model Answer" after receiving feedback
+   - Study AI-generated band 7-7.5 standard responses
+   - Compare your answer with the model to identify improvements
+   - Learn proper structure, vocabulary, and fluency patterns
+
+5. **Continue Practice**
    - Move to next question
    - Switch between test parts
    - Review previous responses
