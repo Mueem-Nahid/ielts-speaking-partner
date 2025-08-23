@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Settings } from 'lucide-react';
 import TestSession from '@/components/TestSession';
+import { useError } from '@/contexts/ErrorContext';
+import { OpenAIService } from '@/lib/openai';
 
 type TestPart = 1 | 2 | 3;
 type TestPhase = 'setup' | 'active' | 'completed';
@@ -24,6 +26,8 @@ export default function IELTSSpeakingPartner() {
     responses: []
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [isValidatingKey, setIsValidatingKey] = useState(false);
+  const { showError } = useError();
 
   // API Key storage functions
   const saveApiKey = (key: string) => {
@@ -69,11 +73,24 @@ export default function IELTSSpeakingPartner() {
     }
   }, []);
 
-  const handleApiKeySubmit = () => {
+  const handleApiKeySubmit = async () => {
     if (apiKey.trim()) {
-      saveApiKey(apiKey.trim());
-      setIsApiKeySet(true);
-      setShowSettings(false);
+      setIsValidatingKey(true);
+      try {
+        const openAIService = new OpenAIService(apiKey.trim());
+        const validation = await openAIService.validateApiKey();
+        if (validation.isValid) {
+          saveApiKey(apiKey.trim());
+          setIsApiKeySet(true);
+          setShowSettings(false);
+        } else {
+          showError(validation.error || 'Invalid API key. Please check your key and try again.');
+        }
+      } catch (error) {
+        showError('Failed to validate API key. Please check your internet connection and try again.');
+      } finally {
+        setIsValidatingKey(false);
+      }
     }
   };
 
@@ -112,10 +129,10 @@ export default function IELTSSpeakingPartner() {
             
             <button
               onClick={handleApiKeySubmit}
-              disabled={!apiKey.trim()}
+              disabled={!apiKey.trim() || isValidatingKey}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
             >
-              Start Practice
+              {isValidatingKey ? 'Validating...' : 'Start Practice'}
             </button>
           </div>
           
@@ -260,9 +277,10 @@ export default function IELTSSpeakingPartner() {
                   </button>
                   <button
                     onClick={handleApiKeySubmit}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    disabled={isValidatingKey}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                   >
-                    Save
+                    {isValidatingKey ? 'Validating...' : 'Save'}
                   </button>
                 </div>
               </div>

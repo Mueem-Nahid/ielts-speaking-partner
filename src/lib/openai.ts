@@ -2,12 +2,70 @@ import OpenAI from 'openai';
 
 export class OpenAIService {
   private client: OpenAI;
+  private apiKey: string;
 
   constructor(apiKey: string) {
+    this.apiKey = apiKey;
     this.client = new OpenAI({
       apiKey,
       dangerouslyAllowBrowser: true
     });
+  }
+
+  // Validate API key by making a simple test request
+  async validateApiKey(): Promise<{ isValid: boolean; error?: string }> {
+    try {
+      // Make a simple request to test the API key
+      await this.client.models.list();
+      return { isValid: true };
+    } catch (error: any) {
+      console.error('API key validation failed:', error);
+      
+      if (error?.status === 401) {
+        return { 
+          isValid: false, 
+          error: 'Invalid API key. Please check your OpenAI API key and try again.' 
+        };
+      } else if (error?.status === 429) {
+        return { 
+          isValid: false, 
+          error: 'API rate limit exceeded. Please try again later or check your OpenAI account.' 
+        };
+      } else if (error?.status === 403) {
+        return { 
+          isValid: false, 
+          error: 'API access forbidden. Please ensure your API key has the required permissions.' 
+        };
+      } else if (error?.code === 'insufficient_quota') {
+        return { 
+          isValid: false, 
+          error: 'Insufficient API quota. Please check your OpenAI account billing.' 
+        };
+      } else {
+        return { 
+          isValid: false, 
+          error: 'Failed to connect to OpenAI. Please check your internet connection and try again.' 
+        };
+      }
+    }
+  }
+
+  private handleApiError(error: any, operation: string): never {
+    console.error(`Error in ${operation}:`, error);
+    
+    if (error?.status === 401) {
+      throw new Error('Invalid API key. Please check your OpenAI API key in settings.');
+    } else if (error?.status === 429) {
+      throw new Error('API rate limit exceeded. Please try again in a few moments.');
+    } else if (error?.status === 403) {
+      throw new Error('API access forbidden. Please check your API key permissions.');
+    } else if (error?.code === 'insufficient_quota') {
+      throw new Error('Insufficient API quota. Please check your OpenAI account billing.');
+    } else if (error?.message?.includes('network')) {
+      throw new Error('Network error. Please check your internet connection.');
+    } else {
+      throw new Error(`Failed to ${operation}. Please try again.`);
+    }
   }
 
   async generateQuestion(part: number, questionNumber: number, previousResponses?: string[]): Promise<string> {
@@ -36,8 +94,7 @@ export class OpenAIService {
 
       return response.choices[0]?.message?.content || 'Could you tell me about yourself?';
     } catch (error) {
-      console.error('Error generating question:', error);
-      return this.getFallbackQuestion(part, questionNumber);
+      this.handleApiError(error, 'generate question');
     }
   }
 
@@ -88,8 +145,7 @@ export class OpenAIService {
       }
       return this.getFallbackEvaluation();
     } catch (error) {
-      console.error('Error evaluating response:', error);
-      return this.getFallbackEvaluation();
+      this.handleApiError(error, 'evaluate response');
     }
   }
 
@@ -145,8 +201,7 @@ export class OpenAIService {
 
       return response.choices[0]?.message?.content || this.getFallbackModelAnswer(part);
     } catch (error) {
-      console.error('Error generating model answer:', error);
-      return this.getFallbackModelAnswer(part);
+      this.handleApiError(error, 'generate model answer');
     }
   }
 
@@ -161,8 +216,7 @@ export class OpenAIService {
 
       return await response.arrayBuffer();
     } catch (error) {
-      console.error('Error with text-to-speech:', error);
-      throw error;
+      this.handleApiError(error, 'convert text to speech');
     }
   }
 
@@ -178,8 +232,7 @@ export class OpenAIService {
 
       return response.text;
     } catch (error) {
-      console.error('Error with speech-to-text:', error);
-      throw error;
+      this.handleApiError(error, 'convert speech to text');
     }
   }
 
