@@ -232,6 +232,7 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
 
   const generateGeneralModelAnswer = useCallback(async () => {
     const question = questions[currentQuestionIndex];
+    const userResponse = responses.find(r => r.questionId === currentQuestionIndex);
     if (!question) return;
     
     setIsLoadingGeneralModelAnswer(true);
@@ -243,12 +244,22 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
       );
       setGeneralModelAnswer(generalAnswerText);
       setShowGeneralModelAnswer(true);
+
+      // Save to history when general model answer is generated
+      if (userResponse) {
+        await saveToHistory({
+          question: question.text,
+          userAnswer: userResponse.text,
+          modelAnswer: generalAnswerText,
+          evaluation: userResponse.evaluation
+        });
+      }
     } catch (error) {
       console.error('Error generating general model answer:', error);
     } finally {
       setIsLoadingGeneralModelAnswer(false);
     }
-  }, [openAIService, questions, currentQuestionIndex, part]);
+  }, [openAIService, questions, currentQuestionIndex, part, responses, saveToHistory]);
 
   const nextQuestion = useCallback(() => {
     const nextIndex = currentQuestionIndex + 1;
@@ -257,6 +268,8 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
     setShowEvaluation(false);
     setModelAnswer('');
     setShowModelAnswer(false);
+    setGeneralModelAnswer('');
+    setShowGeneralModelAnswer(false);
     clearAudio();
 
     if (nextIndex < 5) { // Assuming 5 questions per part
@@ -479,9 +492,6 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
                 </p>
               </div>
               
-              {/* Google Translate Section */}
-              <GoogleTranslate className="mb-3" />
-              
               <div className="text-xs text-indigo-600">
                 💡 This is your response improved to band 7-7.5 level while keeping your personal details and core message
               </div>
@@ -501,12 +511,20 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
                 </p>
               </div>
               
-              {/* Google Translate Section */}
-              <GoogleTranslate className="mb-3" />
-              
               <div className="text-xs text-green-600">
                 💡 This is a general model answer without personal context, suitable for band 6.5-7 level
               </div>
+            </div>
+          )}
+
+          {/* Google Translate Section - Single instance for both model answers */}
+          {(showModelAnswer || showGeneralModelAnswer) && (
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+              <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
+                <MessageSquare size={16} />
+                Translate to Bangla
+              </h4>
+              <GoogleTranslate />
             </div>
           )}
 
