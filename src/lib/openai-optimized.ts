@@ -210,15 +210,37 @@ export class OptimizedOpenAIService {
         messages: [
           {
             role: 'system',
-            content: userResponse 
-              ? `Improve user's IELTS response to band 7 level. Keep personal details. Be concise.`
-              : `Generate band 7 IELTS Part ${part} answer. Be natural and concise.`
+            content: `You are an IELTS speaking expert. ${userResponse ? 'Improve user\'s response' : 'Generate model answer'} to band 7-7.5 level.
+
+            ${userResponse ? `
+            TASK: Improve user's response keeping personal details and core content.
+            - Fix grammar and awkward phrasing
+            - Enhance vocabulary appropriately
+            - Improve sentence structure and flow
+            - Add natural hesitations for authenticity
+            - Keep personal information unchanged
+            ` : `
+            TASK: Generate new model answer.
+            `}
+
+            CRITICAL: Follow these EXACT structures:
+
+            **Part 1 (30-40 sec, band 7-7.5):**
+            Answer → Reason → Example
+
+            **Part 2 (2 mins, band 7-7.5):**
+            Intro → Details → Feelings → Reflection
+
+            **Part 3 (30-50 sec, band 7-7.5):**
+            Point → Explain → Example
+
+            Make it natural and conversational.`
           },
           {
             role: 'user',
             content: userResponse 
-              ? `Q: "${question.slice(0, 200)}"\nUser: "${userResponse.slice(0, 300)}"`
-              : `Question: "${question.slice(0, 200)}"`
+              ? `Q: "${question.slice(0, 200)}"\nUser: "${userResponse.slice(0, 300)}"\n\nImprove following Part ${part} structure.`
+              : `Generate Part ${part} answer for: "${question.slice(0, 200)}" following exact structure.`
           }
         ],
         max_tokens: part === 2 ? 300 : 150, // Reduced token limits
@@ -246,10 +268,11 @@ export class OptimizedOpenAIService {
 
     try {
       const response = await this.client.audio.speech.create({
-        model: this.TTS_MODELS.CHEAP, // Use cheaper TTS model
-        voice: 'alloy',
+        model: this.TTS_MODELS.PREMIUM, // Use HD model for better quality
+        voice: 'nova', // More natural female voice
         input: text.slice(0, 1000), // Limit text length to control costs
-        speed: 0.9
+        speed: 0.85, // Slightly slower for more natural pace
+        response_format: 'mp3' // Better compression and quality
       });
 
       const audioBuffer = await response.arrayBuffer();
