@@ -1,56 +1,48 @@
-# IELTS Speaking Partner 🎤
+# IELTS Speaking Partner
 
-An AI-powered IELTS speaking practice application that provides realistic test simulation with real-time feedback and scoring using OpenAI's advanced voice technology.
+An AI-powered IELTS speaking practice application with comprehensive user authentication, model answer caching, and progress tracking.
 
-🌐 **Live Demo**: [https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)
+## Features
 
-## 🌟 Features
+### Core Features
+- **AI-Powered Speaking Practice**: Practice IELTS speaking tests (Parts 1, 2, and 3) with OpenAI's advanced voice models
+- **Real-time Voice Interaction**: Natural conversation flow with AI examiner
+- **Authentic Test Structure**: Follows official IELTS speaking test format and timing
+- **Instant Feedback**: Get detailed feedback on pronunciation, fluency, and content
 
-### Complete IELTS Test Coverage
-- **Part 1**: Introduction and interview (4-5 minutes) - Personal questions about familiar topics
-- **Part 2**: Long turn (3-4 minutes) - Topic card with preparation time and structured speaking
-- **Part 3**: Discussion (4-5 minutes) - Abstract follow-up questions related to Part 2 topics
+### Authentication & User Management
+- **Secure User Registration**: Create accounts with email and password
+- **JWT-based Authentication**: Secure session management with NextAuth.js
+- **Protected Routes**: Middleware protection for authenticated areas
+- **Session Persistence**: 30-day session duration with automatic renewal
 
-### Advanced AI Integration
-- **Voice Recognition**: OpenAI Whisper for accurate speech-to-text transcription
-- **Text-to-Speech**: Natural-sounding AI examiner voice using OpenAI TTS
-- **Smart Question Generation**: GPT-4 powered dynamic question creation from authentic IELTS database
-- **Intelligent Evaluation**: Real-time band score assessment with detailed feedback
-- **Personalized Improvements**: AI enhances your responses to band 7-7.5 level while preserving your personal details
-- **Authentic IELTS Flow**: Part 3 questions are contextually related to Part 2 topics, just like the real test
+### Database & Caching System
+- **MongoDB Integration**: Robust data storage with Mongoose ODM
+- **Model Answer Caching**: Intelligent caching system to reduce OpenAI API costs
+- **User History Tracking**: Complete practice session history with detailed analytics
+- **Performance Optimization**: Indexed queries for fast data retrieval
 
-### Professional Features
-- 🎯 **Authentic IELTS Format**: Questions follow official test structure and timing
-- 📊 **Real-time Scoring**: Instant band scores (1-9) with detailed feedback
-- 🎙️ **High-Quality Audio**: Professional recording with noise suppression
-- ⏱️ **Timer Integration**: Track your speaking time like in real tests
-- 📝 **Transcription**: See exactly what you said for self-assessment
-- 💡 **Improvement Suggestions**: Specific tips for better performance
-- 🔄 **Random Questions**: Never get the same questions twice - unlimited variety
-- 🛡️ **Secure API Key Management**: 3-day local storage with automatic expiration
-- ⚡ **Global Error Handling**: Comprehensive error management with user-friendly messages
+### Progress Tracking
+- **Session History**: Track all practice sessions with timestamps
+- **Performance Analytics**: Band scores and detailed criteria breakdown
+- **Question Bank**: Cached questions and model answers for reuse
+- **Usage Statistics**: Monitor API usage and cost optimization
 
-## 🚀 Getting Started
+## Technology Stack
 
-### Quick Start (Recommended)
-Visit the live application: **[https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)**
+- **Frontend**: Next.js 15.5.0, React 19.1.0, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, NextAuth.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: NextAuth.js with JWT strategy
+- **AI Integration**: OpenAI API with advanced voice models
+- **Validation**: Zod for runtime type checking
+- **Security**: bcryptjs for password hashing
 
-1. Enter your OpenAI API key (stored securely in your browser for 3 days)
-2. Grant microphone permission
-3. Choose your test part and start practicing!
-
-### Local Development
-
-#### Prerequisites
-- Node.js 18+ installed
-- OpenAI API key with access to GPT-4 and Whisper models
-- Modern web browser with microphone access
-
-#### Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/ielts-speaking-partner.git
+   git clone <repository-url>
    cd ielts-speaking-partner
    ```
 
@@ -59,243 +51,183 @@ Visit the live application: **[https://ielts-speaking-partner.vercel.app/](https
    npm install
    ```
 
-3. **Start the development server**
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in the required environment variables:
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/ielts-speaking-partner
+   NEXTAUTH_SECRET=your-secret-key-here
+   NEXTAUTH_URL=http://localhost:3000
+   OPENAI_API_KEY=your-openai-api-key-here
+   ```
+
+4. **Set up MongoDB**
+   - Install MongoDB locally or use MongoDB Atlas
+   - Create a database named `ielts-speaking-partner`
+   - The application will automatically create the required collections
+
+5. **Run the development server**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:3000`
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 🎯 How to Use
+## Database Schema
 
-### Starting a Practice Session
+### User Model
+```typescript
+{
+  name: string
+  email: string (unique)
+  password: string (hashed)
+  lastLogin?: Date
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+```
 
-1. **API Key Setup**
-   - Enter your OpenAI API key on first visit
-   - Key is validated before saving
-   - Stored securely in browser for 3 days, then automatically removed
+### ModelAnswer Model
+```typescript
+{
+  questionHash: string (unique)
+  question: string
+  part: 1 | 2 | 3
+  topic?: string
+  modelAnswer: string
+  bandScore: number (1-9)
+  criteria: {
+    fluencyCoherence: number (1-9)
+    lexicalResource: number (1-9)
+    grammaticalRange: number (1-9)
+    pronunciation: number (1-9)
+  }
+  usageCount: number
+  createdAt: Date
+  updatedAt: Date
+}
+```
 
-2. **Select Test Part**
-   - **Part 1**: Personal questions from 54 authentic IELTS topics
-   - **Part 2**: Cue card topics from 140+ comprehensive database
-   - **Part 3**: Follow-up questions contextually related to Part 2 topics
+### UserHistory Model
+```typescript
+{
+  userId: ObjectId
+  sessionId: string
+  part: 1 | 2 | 3
+  topic?: string
+  questions: Array<{
+    question: string
+    userAnswer?: string
+    modelAnswer?: string
+    evaluation?: {
+      bandScore: number (1-9)
+      criteria: object
+      feedback: string
+      strengths: string[]
+      improvements: string[]
+    }
+    timestamp: Date
+  }>
+  overallScore?: {
+    bandScore: number (1-9)
+    criteria: object
+  }
+  duration: number (seconds)
+  completedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+}
+```
 
-3. **Practice Flow**
-   - Listen to AI-generated question variations (click speaker icon)
-   - Click microphone to start recording your response
-   - Speak naturally and clearly
-   - Click microphone again to stop recording
-   - Submit your response for evaluation
+## API Endpoints
 
-4. **Get Comprehensive Feedback**
-   - View your transcribed response
-   - Receive band score (1-9 scale)
-   - Read detailed feedback on:
-     - Fluency and Coherence
-     - Lexical Resource (vocabulary)
-     - Grammatical Range and Accuracy
-     - Pronunciation assessment
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/[...nextauth]` - NextAuth.js authentication
+- `GET /api/auth/[...nextauth]` - Session management
 
-5. **Learn from Personalized Model Answers**
-   - Click "Show Model Answer" after receiving feedback
-   - View AI-improved version of YOUR response (not generic answers)
-   - Maintains your personal details while enhancing language quality
-   - Learn proper structure, vocabulary, and fluency patterns
+### Model Answers
+- `GET /api/model-answers` - Search cached model answers
+- `POST /api/model-answers` - Cache new model answers
 
-6. **Continue Practice**
-   - Get fresh, random questions every time
-   - Switch between test parts seamlessly
-   - Experience authentic IELTS test flow
+### User History
+- `GET /api/user-history` - Retrieve user practice history
+- `POST /api/user-history` - Save practice session
 
-## 🏗️ Project Structure
+## Usage
 
+### Getting Started
+1. **Create an Account**: Register with your email and password
+2. **Sign In**: Access your personalized dashboard
+3. **Provide API Key**: Enter your OpenAI API key for voice interactions
+4. **Choose Test Part**: Select from IELTS Parts 1, 2, or 3
+5. **Start Practice**: Begin your speaking practice session
+
+### Practice Flow
+1. **Question Generation**: AI generates authentic IELTS questions
+2. **Voice Interaction**: Speak naturally with the AI examiner
+3. **Real-time Feedback**: Receive instant pronunciation and fluency feedback
+4. **Session Recording**: All sessions are automatically saved to your history
+5. **Progress Tracking**: View detailed analytics and improvement suggestions
+
+### Model Answer Caching
+- Questions are automatically hashed and cached to reduce API costs
+- Cached answers are reused for identical questions
+- Usage statistics help optimize API consumption
+- High-quality model answers improve over time
+
+## Security Features
+
+- **Password Hashing**: bcryptjs with 12 salt rounds
+- **JWT Tokens**: Secure session management
+- **Protected Routes**: Middleware-based route protection
+- **Input Validation**: Zod schema validation for all inputs
+- **Error Handling**: Comprehensive error handling and logging
+- **Rate Limiting**: Built-in protection against abuse
+
+## Development
+
+### Project Structure
 ```
 src/
-├── app/
-│   ├── page.tsx              # Main application with API key management
-│   ├── layout.tsx            # App layout with error provider
-│   └── globals.css           # Global styles
-├── components/
-│   └── TestSession.tsx       # Complete test session management
-├── contexts/
-│   └── ErrorContext.tsx     # Global error handling system
-├── hooks/
-│   └── useAudioRecorder.ts   # Audio recording functionality
-├── lib/
-│   └── openai.ts             # OpenAI service with comprehensive error handling
-└── data/
-    ├── part_1_questions.json # 54 authentic Part 1 questions
-    ├── part_2_questions.json # 140+ Part 2 topics
-    └── ielts-questions.json  # Additional question database
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   ├── auth/              # Authentication pages
+│   └── dashboard/         # Protected dashboard
+├── components/            # React components
+├── contexts/              # React contexts
+├── lib/                   # Utility libraries
+│   ├── models/           # Database models
+│   ├── auth.ts           # NextAuth configuration
+│   ├── mongodb.ts        # Database connection
+│   └── openai.ts         # OpenAI integration
+├── middleware.ts          # Route protection
+└── types/                # TypeScript definitions
 ```
 
-## 🔧 Technical Details
+### Key Components
+- **SessionProvider**: NextAuth session management
+- **TestSession**: Main practice interface
+- **ErrorContext**: Global error handling
+- **Middleware**: Route protection and authentication
 
-### Built With
-- **Next.js 15** - React framework with App Router and Turbopack
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **OpenAI API** - GPT-4, Whisper, and TTS models
-- **Web Audio API** - Browser audio recording
-- **Vercel** - Deployment and hosting
-
-### Key Features
-
-#### Authentic Question Database
-- **Part 1**: 54 carefully curated personal questions
-- **Part 2**: 140+ comprehensive cue card topics
-- **Part 3**: AI-generated follow-ups based on Part 2 topics
-- **Random Selection**: Different questions every session
-- **AI Variations**: Fresh question variations using your database as prompts
-
-#### Advanced Error Handling
-- **API Key Validation**: Detects fake/invalid keys before saving
-- **Network Error Recovery**: Graceful handling of connection issues
-- **User-Friendly Messages**: Clear, actionable error notifications
-- **Automatic Error Clearing**: Errors disappear after 5 seconds
-- **Fallback Systems**: Backup questions if API fails
-
-#### Security & Privacy
-- **Local Storage Only**: API keys never sent to external servers
-- **3-Day Expiration**: Automatic key removal for security
-- **No Data Collection**: Your responses stay private
-- **Secure Validation**: Keys validated before storage
-
-## 🎨 User Interface
-
-### Design Features
-- **Modern UI**: Clean, professional interface optimized for focus
-- **Responsive Design**: Perfect on desktop, tablet, and mobile
-- **Visual Feedback**: Clear recording status and progress indicators
-- **Accessibility**: Keyboard navigation and screen reader support
-- **Loading States**: Visual feedback during API key validation
-
-### Color Coding
-- **Green**: Part 1 (Introduction & Interview)
-- **Orange**: Part 2 (Long Turn & Cue Cards)
-- **Purple**: Part 3 (Discussion & Analysis)
-- **Blue**: Primary actions and navigation
-- **Red**: Error states and warnings
-
-## 📊 Evaluation Criteria
-
-The AI evaluates responses based on official IELTS criteria:
-
-1. **Fluency and Coherence** (25%)
-   - Speaking rate and flow
-   - Logical sequencing of ideas
-   - Use of cohesive devices
-
-2. **Lexical Resource** (25%)
-   - Vocabulary range and accuracy
-   - Appropriate word choice
-   - Paraphrasing ability
-
-3. **Grammatical Range and Accuracy** (25%)
-   - Sentence structure variety
-   - Grammar accuracy
-   - Complex structure usage
-
-4. **Pronunciation** (25%)
-   - Individual sound clarity
-   - Word stress and intonation
-   - Overall intelligibility
-
-## 🚀 Deployment
-
-### Live Application
-The app is deployed on Vercel: **[https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)**
-
-### Deploy Your Own
-1. Fork this repository
-2. Connect to Vercel
-3. Deploy with one click
-4. No environment variables needed (API keys handled client-side)
-
-### Build for Production
-```bash
-npm run build
-npm start
-```
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-## 📝 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
-## 🆘 Support
+## Support
 
-### Common Issues
-
-**Microphone not working?**
-- Check browser permissions in address bar
-- Ensure HTTPS connection (required for microphone access)
-- Try refreshing the page and granting permission again
-
-**API Key errors?**
-- Verify your OpenAI API key is valid and active
-- Check your OpenAI account has sufficient credits
-- Ensure you have access to GPT-4 and Whisper models
-- Try entering the key again (validation happens automatically)
-
-**Audio playback issues?**
-- Check browser audio settings
-- Ensure speakers/headphones are connected
-- Try a different browser (Chrome recommended)
-
-**Questions not generating?**
-- Check your internet connection
-- Verify API key has proper permissions
-- Look for error messages in the top-right corner
-
-### Getting Help
-- Check the browser console for detailed error messages
-- Verify all dependencies are installed correctly
-- Ensure you're using a supported browser (Chrome, Firefox, Safari, Edge)
-- Visit the live demo to test functionality
-
-## 🎯 Future Enhancements
-
-- [ ] Progress tracking and analytics dashboard
-- [ ] Custom question sets and topics
-- [ ] Multiple AI voice options and accents
-- [ ] Offline mode with cached questions
-- [ ] Performance history and improvement trends
-- [ ] Group practice sessions and competitions
-- [ ] Integration with IELTS preparation courses
-- [ ] Mobile app versions (iOS/Android)
-- [ ] Advanced pronunciation analysis
-- [ ] Speaking fluency metrics and graphs
-
-## 🙏 Acknowledgments
-
-- **OpenAI** for providing advanced AI models (GPT-4, Whisper, TTS)
-- **IELTS** for the official test format guidelines and structure
-- **Vercel** for excellent hosting and deployment platform
-- **Next.js Team** for the amazing React framework
-- **The open-source community** for excellent tools and libraries
-
-## 📈 Project Stats
-
-- **54** Authentic Part 1 questions
-- **140+** Part 2 cue card topics  
-- **Unlimited** Part 3 follow-up questions
-- **Real-time** AI evaluation and feedback
-- **3-day** secure API key storage
-- **100%** client-side privacy protection
-
----
-
-**Ready to ace your IELTS speaking test?** 🚀
-
-**Practice now**: [https://ielts-speaking-partner.vercel.app/](https://ielts-speaking-partner.vercel.app/)
-
-*Transform your IELTS speaking skills with AI-powered practice that adapts to you!*
+For support and questions, please open an issue on the GitHub repository.

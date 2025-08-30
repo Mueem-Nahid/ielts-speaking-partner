@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Mic, MicOff, Play, Pause, Volume2, Clock, MessageSquare, Star, BookOpen } from 'lucide-react';
 import { OpenAIService } from '@/lib/openai';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
+import { useSession } from 'next-auth/react';
 
 interface TestSessionProps {
   part: number;
@@ -29,6 +30,7 @@ interface Response {
 }
 
 export default function TestSession({ part, apiKey, onExit }: TestSessionProps) {
+  const { data: session } = useSession();
   const [openAIService] = useState(() => new OpenAIService(apiKey));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -42,6 +44,8 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
   const [showModelAnswer, setShowModelAnswer] = useState(false);
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const [sessionStartTime] = useState(() => Date.now());
 
   const {
     isRecording,
@@ -140,6 +144,56 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
     }
   }, [audioBlob, openAIService, part, currentQuestionIndex]);
 
+  const saveToHistory = useCallback(async (questionData: {
+    question: string;
+    userAnswer: string;
+    modelAnswer: string;
+    evaluation?: any;
+  }) => {
+    if (!session?.user?.id) return;
+
+    try {
+      const historyData = {
+        sessionId,
+        part,
+        questions: [{
+          question: questionData.question,
+          userAnswer: questionData.userAnswer,
+          modelAnswer: questionData.modelAnswer,
+          evaluation: questionData.evaluation ? {
+            bandScore: questionData.evaluation.score,
+            criteria: {
+              fluencyCoherence: questionData.evaluation.score,
+              lexicalResource: questionData.evaluation.score,
+              grammaticalRange: questionData.evaluation.score,
+              pronunciation: questionData.evaluation.score
+            },
+            feedback: questionData.evaluation.feedback,
+            strengths: questionData.evaluation.suggestions.slice(0, 2) || [],
+            improvements: questionData.evaluation.suggestions.slice(2) || []
+          } : undefined,
+          timestamp: new Date().toISOString()
+        }],
+        duration: timer,
+        completedAt: new Date().toISOString()
+      };
+
+      const response = await fetch('/api/user-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(historyData),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save history:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error saving to history:', error);
+    }
+  }, [session, sessionId, part, timer]);
+
   const generateModelAnswer = useCallback(async () => {
     const question = questions[currentQuestionIndex];
     const userResponse = responses.find(r => r.questionId === currentQuestionIndex);
@@ -154,12 +208,22 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
       );
       setModelAnswer(modelAnswerText);
       setShowModelAnswer(true);
+
+      // Save to history when model answer is generated
+      if (userResponse) {
+        await saveToHistory({
+          question: question.text,
+          userAnswer: userResponse.text,
+          modelAnswer: modelAnswerText,
+          evaluation: userResponse.evaluation
+        });
+      }
     } catch (error) {
       console.error('Error generating model answer:', error);
     } finally {
       setIsLoadingModelAnswer(false);
     }
-  }, [openAIService, questions, currentQuestionIndex, part, responses]);
+  }, [openAIService, questions, currentQuestionIndex, part, responses, saveToHistory]);
 
   const nextQuestion = useCallback(() => {
     const nextIndex = currentQuestionIndex + 1;
