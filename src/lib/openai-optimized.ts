@@ -234,7 +234,7 @@ export class OptimizedOpenAIService {
             **Part 3 (30-50 sec, band 7-7.5):**
             Point → Explain → Example
 
-            Make it natural and conversational.`
+            IMPORTANT: Keep language SIMPLE and ACCESSIBLE. Use everyday vocabulary, mostly simple sentences, and sound like a real person having a normal conversation. Don't use too many difficult words. Add natural hesitations (um, well, you know) for authenticity.`
           },
           {
             role: 'user',
@@ -271,7 +271,7 @@ export class OptimizedOpenAIService {
         model: this.TTS_MODELS.PREMIUM, // Use HD model for better quality
         voice: 'nova', // More natural female voice
         input: text.slice(0, 1000), // Limit text length to control costs
-        speed: 0.85, // Slightly slower for more natural pace
+        speed: 0.9, // Natural pace
         response_format: 'mp3' // Better compression and quality
       });
 
