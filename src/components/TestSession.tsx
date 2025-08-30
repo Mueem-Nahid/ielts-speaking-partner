@@ -5,6 +5,7 @@ import { Mic, MicOff, Play, Pause, Volume2, Clock, MessageSquare, Star, BookOpen
 import { OpenAIService } from '@/lib/openai';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { useSession } from 'next-auth/react';
+import GoogleTranslate from '@/components/GoogleTranslate';
 
 interface TestSessionProps {
   part: number;
@@ -430,12 +431,16 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
                 <BookOpen size={16} />
                 Improved Response (Band 7-7.5)
               </h4>
-              <div className="bg-white rounded-lg p-4 border border-indigo-100">
+              <div className="bg-white rounded-lg p-4 border border-indigo-100 mb-4">
                 <p className="text-indigo-900 text-sm leading-relaxed whitespace-pre-wrap">
                   {modelAnswer}
                 </p>
               </div>
-              <div className="mt-3 text-xs text-indigo-600">
+              
+              {/* Google Translate Section */}
+              <GoogleTranslate className="mb-3" />
+              
+              <div className="text-xs text-indigo-600">
                 💡 This is your response improved to band 7-7.5 level while keeping your personal details and core message
               </div>
             </div>
