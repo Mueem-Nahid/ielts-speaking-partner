@@ -43,6 +43,9 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
   const [modelAnswer, setModelAnswer] = useState('');
   const [isLoadingModelAnswer, setIsLoadingModelAnswer] = useState(false);
   const [showModelAnswer, setShowModelAnswer] = useState(false);
+  const [generalModelAnswer, setGeneralModelAnswer] = useState('');
+  const [isLoadingGeneralModelAnswer, setIsLoadingGeneralModelAnswer] = useState(false);
+  const [showGeneralModelAnswer, setShowGeneralModelAnswer] = useState(false);
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
@@ -227,6 +230,26 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
     }
   }, [openAIService, questions, currentQuestionIndex, part, responses, saveToHistory]);
 
+  const generateGeneralModelAnswer = useCallback(async () => {
+    const question = questions[currentQuestionIndex];
+    if (!question) return;
+    
+    setIsLoadingGeneralModelAnswer(true);
+    try {
+      const generalAnswerText = await openAIService.generateModelAnswer(
+        question.text, 
+        part, 
+        undefined // No user response - generate general answer
+      );
+      setGeneralModelAnswer(generalAnswerText);
+      setShowGeneralModelAnswer(true);
+    } catch (error) {
+      console.error('Error generating general model answer:', error);
+    } finally {
+      setIsLoadingGeneralModelAnswer(false);
+    }
+  }, [openAIService, questions, currentQuestionIndex, part]);
+
   const nextQuestion = useCallback(() => {
     const nextIndex = currentQuestionIndex + 1;
     setCurrentQuestionIndex(nextIndex);
@@ -380,23 +403,42 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
                   <Star size={16} />
                   Evaluation & Feedback
                 </h4>
-                <button
-                  onClick={generateModelAnswer}
-                  disabled={isLoadingModelAnswer}
-                  className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition-colors flex items-center gap-2"
-                >
-                  {isLoadingModelAnswer ? (
-                    <>
-                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                      <span>Generating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <BookOpen size={16} />
-                      <span>Show Model Answer</span>
-                    </>
-                  )}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={generateModelAnswer}
+                    disabled={isLoadingModelAnswer}
+                    className="px-3 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition-colors flex items-center gap-2"
+                  >
+                    {isLoadingModelAnswer ? (
+                      <>
+                        <div className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full"></div>
+                        <span>Loading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <BookOpen size={14} />
+                        <span>Improved</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={generateGeneralModelAnswer}
+                    disabled={isLoadingGeneralModelAnswer}
+                    className="px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center gap-2"
+                  >
+                    {isLoadingGeneralModelAnswer ? (
+                      <>
+                        <div className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full"></div>
+                        <span>Loading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <BookOpen size={14} />
+                        <span>General</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
               
               <div className="grid md:grid-cols-2 gap-4">
@@ -424,7 +466,7 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
             </div>
           )}
 
-          {/* Model Answer */}
+          {/* Improved Model Answer */}
           {showModelAnswer && modelAnswer && (
             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6 mb-6">
               <h4 className="font-medium text-indigo-800 mb-4 flex items-center gap-2">
@@ -442,6 +484,28 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
               
               <div className="text-xs text-indigo-600">
                 💡 This is your response improved to band 7-7.5 level while keeping your personal details and core message
+              </div>
+            </div>
+          )}
+
+          {/* General Model Answer */}
+          {showGeneralModelAnswer && generalModelAnswer && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+              <h4 className="font-medium text-green-800 mb-4 flex items-center gap-2">
+                <BookOpen size={16} />
+                General Model Answer (Band 6.5-7)
+              </h4>
+              <div className="bg-white rounded-lg p-4 border border-green-100 mb-4">
+                <p className="text-green-900 text-sm leading-relaxed whitespace-pre-wrap">
+                  {generalModelAnswer}
+                </p>
+              </div>
+              
+              {/* Google Translate Section */}
+              <GoogleTranslate className="mb-3" />
+              
+              <div className="text-xs text-green-600">
+                💡 This is a general model answer without personal context, suitable for band 6.5-7 level
               </div>
             </div>
           )}

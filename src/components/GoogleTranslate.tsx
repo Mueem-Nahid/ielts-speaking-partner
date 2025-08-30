@@ -67,7 +67,7 @@ export default function GoogleTranslate({ className = "" }: CompactGoogleTransla
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Enter English word..."
-            className="flex-1 px-3 py-2 text-sm border border-gray-400 rounded-md bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
           />
           <button
             onClick={translateText}
