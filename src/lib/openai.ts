@@ -179,24 +179,42 @@ export class OpenAIService {
             TASK: Generate a completely new model answer.
             `}
 
+            CRITICAL: Follow these EXACT structures for each part:
+
+            **Part 1 Structure (30-40 seconds, band 7-7.5):**
+            Answer → Reason → Example
+            - Start with a direct answer to the question
+            - Provide a clear reason or explanation
+            - Give a specific example or personal detail
+            - Keep it concise but complete
+
+            **Part 2 Structure (2 minutes, band 7-7.5):**
+            Intro → Details → Feelings → Reflection
+            - Intro: Brief introduction to the topic
+            - Details: Specific information covering the bullet points
+            - Feelings: How you felt about the experience/topic
+            - Reflection: What you learned or how it affected you
+
+            **Part 3 Structure (30-50 seconds, band 7-7.5):**
+            Point → Explain → Example
+            - Point: State your main argument or opinion
+            - Explain: Elaborate on your reasoning
+            - Example: Provide a concrete example to support your point
+
             For Part ${part}, the response should demonstrate:
-            - Natural fluency with occasional hesitation
-            - Good range of vocabulary with some less common words
-            - Mix of simple and complex sentence structures
-            - Generally accurate grammar with minor errors
+            - Natural fluency with occasional hesitation (um, well, you know)
+            - Simple vocabulary with only a few advanced words where natural
+            - Mostly simple sentences with some compound sentences
+            - Generally accurate grammar with minor natural errors
             - Clear pronunciation and appropriate intonation
             
-            ${part === 1 ? 'Keep the response concise (30-60 seconds worth of speech).' : ''}
-            ${part === 2 ? 'Structure the response to cover all bullet points and speak for about 2 minutes.' : ''}
-            ${part === 3 ? 'Provide a thoughtful, analytical response with examples and explanations.' : ''}
-            
-            Make the response sound natural and conversational, not overly formal or rehearsed.`
+            IMPORTANT: Keep the language SIMPLE and ACCESSIBLE. Don't use too many difficult words or complex structures. Sound like a real person having a normal conversation, not like a textbook. Use everyday vocabulary that feels natural and authentic.`
           },
           {
             role: 'user',
             content: userResponse 
-              ? `Question: "${question}"\n\nUser's Response: "${userResponse}"\n\nPlease improve this response to band 7-7.5 level while keeping the same personal details and core content.`
-              : `Generate a band 7-7.5 model answer for this IELTS Part ${part} question: "${question}"`
+              ? `Question: "${question}"\n\nUser's Response: "${userResponse}"\n\nPlease improve this response to band 7-7.5 level following the Part ${part} structure while keeping the same personal details and core content.`
+              : `Generate a band 7-7.5 model answer for this IELTS Part ${part} question: "${question}" following the exact Part ${part} structure.`
           }
         ],
         max_tokens: part === 2 ? 400 : 250,
@@ -212,10 +230,11 @@ export class OpenAIService {
   async textToSpeech(text: string): Promise<ArrayBuffer> {
     try {
       const response = await this.client.audio.speech.create({
-        model: 'tts-1',
-        voice: 'alloy',
+        model: 'tts-1-hd', // Use HD model for better quality
+        voice: 'nova', // More natural female voice
         input: text,
-        speed: 0.9
+        speed: 0.9,
+        response_format: 'mp3' // Better compression and quality
       });
 
       return await response.arrayBuffer();
