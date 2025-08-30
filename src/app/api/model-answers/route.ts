@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     await connectToDatabase()
 
     // Try exact match first
-    let modelAnswer = await ModelAnswer.findOne({ questionHash })
+    const modelAnswer = await ModelAnswer.findOne({ questionHash })
 
     if (modelAnswer) {
       // Increment usage count
@@ -71,6 +71,7 @@ export async function GET(request: NextRequest) {
     }
 
     // If no exact match, try similar questions
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const searchQuery: any = {}
     if (part) searchQuery.part = parseInt(part)
     if (topic) searchQuery.topic = new RegExp(topic, 'i')

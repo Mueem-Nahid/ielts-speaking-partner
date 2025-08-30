@@ -148,6 +148,7 @@ export default function TestSession({ part, apiKey, onExit }: TestSessionProps) 
     question: string;
     userAnswer: string;
     modelAnswer: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     evaluation?: any;
   }) => {
     if (!session?.user?.id) return;
